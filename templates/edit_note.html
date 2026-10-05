@@ -1,22 +1,29 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar nota</title>
-</head>
-<body>
-    <h1>Editar la nota {{note.id}}</h1>
-    <form method="post">
+{% extends "base.html" %}
+
+{% block title %}Crear Nota{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-lg">
+    <h1 class="text-2xl font-bold mb-4">Editar Nota</h1>
+
+    <form method="POST" class="space-y-4">
         <div>
-            <label for="title">Título</label>
-            <input type="text" name="title" value="{{ note.title }}">
+            <label for="title" class="block text-sm font-medium text-gray-700">Título</label>
+            <input type="text" name="title" id="title" required
+                class="w-full mt-1 rounded border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                value="{{note.title}}">
         </div>
+
         <div>
-            <label for="content">Contenido</label>
-            <textarea name="content">{{ note.content }}</textarea>
+            <label for="content" class="block text-sm font-medium text-gray-700">Contenido</label>
+            <textarea name="content" id="content" rows="4" required
+                class="w-full mt-1 rounded border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200">{{note.content}}</textarea>
         </div>
-        <button type="submit">Guardar nota</button>
+
+        <div class="text-right">
+            <input type="submit" value="Guardar cambios"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer">
+        </div>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

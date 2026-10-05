@@ -1,35 +1,181 @@
-<!DOCTYPE html>
-<html lang=”es”>
+{% extends "base.html" %}
 
-<head>
-    <meta charset=”UTF-8″ />
-    <title>Página de inicio</title>
-</head>
+{% block title %}Notas - Inicio{% endblock %}
 
-<body>
-    <h1>Bienvenido a Flask Notes</h1>
-    <h2>Todas las notas</h2>
-    <ul>            
-        {% for note in notes%}
-            <li>
-                {{note.id}}
-                <br>
-                {{note.title}}
-                <br>
-                {{note.content}}
-                <br>
-                {{note.created_at.strftime("%d %B %Y - %H:%M")}}
-                <a href="{{ url_for('edit_note', id=note.id) }}">✏️ Editar</a>
-                <form action="{{url_for('delete_note', id=note.id)}}" method="POST" onsubmit="return confirm('Seguro deseas eliminar estar nota?');">
-                        <button type="submit">Eliminar</button>
-                </form>
+{% block content %}
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for category, message in messages %}
+
+                {% if category == 'success' %}
+                    <div class="p-4 bg-green-100 text-green-800 rounded-lg">
+                        <strong>Éxito:</strong> {{ message }}
+                    </div>
+
+                {% elif category == 'error' %}
+                    <div class="p-4 bg-red-100 text-red-800 rounded-lg">
+                        <strong>Error:</strong> {{ message }}
+                    </div>
+
+                {% elif category == 'warning' %}
+                    <div class="p-4 bg-yellow-100 text-yellow-800 rounded-lg">
+                        <strong>Advertencia:</strong> {{ message }}
+                    </div>
+
+                {% else %}
+                    <div class="p-4 bg-gray-100 text-gray-800 rounded-lg">
+                        {{ message }}
+                    </div>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+
+<!-- Título -->
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">
+        Bienvenido a Flask Notes
+    </h1>
+</div>
+
+
+<!-- NOTAS -->
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-semibold text-gray-800">
+        Todas las notas
+    </h2>
+
+    <a href="{{ url_for('notes.createNote') }}"
+        class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+        + Nueva nota
+    </a>
+</div>
+
+
+{% if notes %}
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    {% for note in notes %}
+
+    <div class="bg-white shadow-lg rounded-lg p-5">
+
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">
+            {{ note.title }}
+        </h2>
+
+        <p class="text-sm text-gray-500 mb-3">
+            Creado el {{ note.created_at.strftime('%d de %B') }}
+        </p>
+
+        <p class="text-gray-700 mb-4">
+            {{ note.content[:140] }}
+            {% if note.content|length > 140 %}...{% endif %}
+        </p>
+
+        <div class="flex justify-end space-x-2">
+
+            <a href="{{ url_for('notes.edit_note', id=note.id) }}"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                title="Editar Nota">
+                Editar
+            </a>
+
+            <form method="POST"
+                action="{{ url_for('notes.delete_note', id=note.id) }}"
+                onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta nota?');">
+
+                <button type="submit"
+                    class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    title="Eliminar Nota">
+                    Eliminar
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<p class="text-gray-500">
+    No hay notas disponibles. ¡Comienza creando una!
+</p>
+
+{% endif %}
+
+
+<!-- USUARIOS -->
+<div class="mt-12">
+
+    <div class="flex justify-between items-center mb-6">
+
+        <h2 class="text-2xl font-semibold text-gray-800">
+            Usuarios registrados
+        </h2>
+
+        <div class="space-x-2">
+
+            <a href="{{ url_for('users.login') }}"
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                Iniciar sesión
+            </a>
+
+            <a href="{{ url_for('users.register') }}"
+                class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                Registrarse
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {% if users %}
+
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+
+        <ul class="divide-y divide-gray-200">
+
+            {% for user in users %}
+
+            <li class="p-4">
+
+                <p class="font-semibold text-gray-800">
+                    {{ user.username }}
+                </p>
+
+                <p class="text-sm text-gray-500">
+                    {{ user.email }}
+                </p>
+
             </li>
-        {% else %}
-        Aun no se han creado notas
-        {% endfor %}            
-    </ul>
 
-    <a href="{{ url_for('createNote') }}">Agregar una nueva nota</a>
-</body>
+            {% endfor %}
 
-</html>
+        </ul>
+
+    </div>
+
+    {% else %}
+
+    <p class="text-gray-500">
+        Aún no hay usuarios registrados.
+    </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
