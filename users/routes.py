@@ -76,6 +76,6 @@ def register():
 
 @users_bp.route('/logout') 
 def logout(): # Eliminar los datos de la sesión 
-    session.pop("user", None)
+    session.pop("user_id", None)
     flash('Has cerrado sesión correctamente.', 'success') 
     return redirect(url_for('users.login'))
